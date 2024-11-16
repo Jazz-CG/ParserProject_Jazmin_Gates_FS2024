@@ -1,16 +1,29 @@
 grammar project_deliverable_1;
-
+//Github Repo https://github.com/Jazz-CG/ParserProject_Jazmin_Gates_FS2024
 //Name: Jazmin Gates
 //PawPrint: jcgnfd
 //Student ID: 18203238
 
 //  Parser Rules  //
 //entry point and definitoin of programn
-prog:   expr+ EOF;
+prog:   instr+ EOF;
+
+instr: expr
+    | if_block
+    | elif_block
+    | else_block
+    | assignment;
+
+if_block: 'if' expr ':' block (elif_block)* (else_block)?;
+elif_block: 'elif' expr ':' block;
+else_block: 'else' ':' block;
+block: NEWL IND instr+ DEDNT;
 
 //define expressions
 expr: assignment
-    | expr ('+' | '-' | '*' | '/' | '%') expr 
+    | expr ('+' | '-' | '*' | '/' | '%') expr
+    | expr ('<' | '<=' | '>' | '>=' | '==' | '!=') expr 
+    | expr ('and' | 'or' | 'not') expr
     | VARNAME
     | NUM
     | STR
@@ -29,6 +42,9 @@ NUM: [0-9]+ ('.' [0-9]+)?;  //allows for int and float/double types
 STR: '"' (~[\n"])* '"' //accounts for strings with single and double quotes. accepts any characters other than newline and or another double quote
     | '\'' (~[\n"])* '\'';
 BOOL: 'True' | 'False';
+NEWL: ('\r'? '\n' | '\r');
 
+WS: [ \r\n]+ -> skip;
 
-WS: [ \t\r\n]+ -> skip;
+IND: [ ]{4};
+DEDNT: [ ]{0,3} -> skip;
